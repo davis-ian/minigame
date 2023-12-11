@@ -9,6 +9,7 @@ import FlipCard from '@/components/MemoryGame/FlipCard.vue'
 var emojis = ['🧪', '🍗', '🤣', '😍', '🥲', '🙌', '👌', '🤦‍♂️']
 var items = ref([])
 var matchedIndexes = ref([])
+var badSelections = ref([])
 var selectedIndexOld = ref(null)
 var selectedIndexNew = ref(null)
 var moves = ref(0)
@@ -50,7 +51,7 @@ const initList = () => {
 
 // Grid Item Select
 const handleGridItemClick = (i) => {
-	if (disableClick.value) {
+	if (badSelections.value.includes(i)) {
 		return
 	}
 
@@ -109,7 +110,7 @@ const errorBackground = (el) => {
 
 		setTimeout(() => {
 			el.classList.remove('error-bg')
-		}, 800)
+		}, 1500)
 	}
 }
 
@@ -127,14 +128,26 @@ const handleMisMatch = (index1, index2) => {
 	setTimeout(() => {
 		badSelection(el1)
 		badSelection(el2)
-	}, 100)
+	}, 50)
 
-	disableClick.value = true
+	selectedIndexOld.value = null
+	selectedIndexNew.value = null
+	badSelections.value = [...badSelections.value, index1, index2]
+
 	setTimeout(() => {
-		selectedIndexOld.value = null
-		selectedIndexNew.value = null
-		disableClick.value = false
-	}, 2000)
+		let found1 = badSelections.value.find((x) => x == index1)
+		let found2 = badSelections.value.find((x) => x == index2)
+
+		if (found1 !== undefined) {
+			let badIndex1 = badSelections.value.indexOf(found1)
+			badSelections.value.splice(badIndex1, 1)
+		}
+
+		if (found2 !== undefined) {
+			let badIndex2 = badSelections.value.indexOf(found2)
+			badSelections.value.splice(badIndex2, 1)
+		}
+	}, 1500)
 }
 
 const updateBestScore = () => {
@@ -177,6 +190,7 @@ const handleOptionalClasses = (i) => {
 const displayCardValue = (i) => {
 	if (
 		matchedIndexes.value.includes(i) ||
+		badSelections.value.includes(i) ||
 		selectedIndexOld.value == i ||
 		selectedIndexNew.value == i
 	) {
@@ -214,10 +228,12 @@ watch(gameOver, (newVal) => {
 
 <template>
 	<div>
-		<h1 class="text-center">Memory Game</h1>
-
 		<div class="flex justify-content-center">
 			<div style="max-width: 1000px">
+				<h1 class="text-center">Memory Game</h1>
+				<Button @click="$router.push('/')">
+					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+				</Button>
 				<div class="flex justify-content-between">
 					<p>Moves: {{ moves }}</p>
 					<p v-if="bestScore">Best: {{ bestScore }}</p>

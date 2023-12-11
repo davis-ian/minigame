@@ -32,9 +32,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import { faHome } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faHome)
+library.add(faHome, faArrowLeft)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 

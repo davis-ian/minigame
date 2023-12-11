@@ -4,7 +4,7 @@ import NavBar from '@/components/layout/NavBar.vue'
 </script>
 
 <template>
-	<NavBar />
+	<!-- <NavBar /> -->
 	<RouterView />
 	<Toast></Toast>
 </template>

@@ -8,10 +8,10 @@ defineProps({
 </script>
 
 <template>
-	<Card class="grid-item text-center text-4xl border-round-md font-bold border-3 shadow-3 pointer">
+	<Card class="grid-item text-center text-7xl border-round-md font-bold border-3 shadow-3 pointer">
 		<template #content>
 			<span v-if="displayValue">{{ item.icon }}</span>
-			<span class="pa-4" v-else>❔</span>
+			<span v-else>❔</span>
 		</template>
 	</Card>
 </template>
