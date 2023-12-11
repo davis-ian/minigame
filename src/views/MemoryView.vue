@@ -251,7 +251,6 @@ watch(gameOver, (newVal) => {
 				</div>
 			</div>
 		</div>
-
 		<div>
 			<div v-if="moves > 0" class="flex justify-content-center p-3">
 				<Button
