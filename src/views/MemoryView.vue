@@ -51,8 +51,8 @@ const initList = () => {
 
 // Grid Item Select
 const handleGridItemClick = (i) => {
-	if (badSelections.value.includes(i)) {
-		return
+	if (badSelections.value.length > 0) {
+		badSelections.value = []
 	}
 
 	const newIndex = i
@@ -92,44 +92,7 @@ const handleMatch = (index1, index2) => {
 	selectedIndexNew.value = null
 }
 
-const shakeElement = (el) => {
-	if (el) {
-		el.classList.add('shake')
-
-		setTimeout(() => {
-			if (el) {
-				el.classList.remove('shake')
-			}
-		}, 1000)
-	}
-}
-
-const errorBackground = (el) => {
-	if (el) {
-		el.classList.add('error-bg')
-
-		setTimeout(() => {
-			el.classList.remove('error-bg')
-		}, 1500)
-	}
-}
-
-const badSelection = (el) => {
-	if (el) {
-		shakeElement(el)
-		errorBackground(el)
-	}
-}
-
 const handleMisMatch = (index1, index2) => {
-	const el1 = document.getElementById(`grid-item-${index1}`)
-	const el2 = document.getElementById(`grid-item-${index2}`)
-
-	setTimeout(() => {
-		badSelection(el1)
-		badSelection(el2)
-	}, 50)
-
 	selectedIndexOld.value = null
 	selectedIndexNew.value = null
 	badSelections.value = [...badSelections.value, index1, index2]
@@ -180,6 +143,8 @@ const updateHighScore = (score) => {
 const handleOptionalClasses = (i) => {
 	if (matchedIndexes.value.includes(i)) {
 		return 'bg-primary'
+	} else if (badSelections.value.includes(i)) {
+		return 'shake bg-red-400'
 	} else if (selectedIndexOld.value != null && i == selectedIndexOld.value) {
 		return 'border-white bg-primary-900'
 	} else {
