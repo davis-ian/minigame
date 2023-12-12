@@ -4,9 +4,39 @@ import { saveToLocalStorage, getFromLocalStorage } from '@/utilities/general.js'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 
+import JSConfetti from 'js-confetti'
+const jsConfetti = new JSConfetti()
+
+const confettiHandler = () => {
+	jsConfetti.addConfetti({
+		// emojis: ['🎊', '🎈', '🎉']
+		emojis: emojis.value
+	})
+}
+
 import FlipCard from '@/components/MemoryGame/FlipCard.vue'
 
-var emojis = ['🧪', '🍗', '🤣', '😍', '🥲', '🙌', '👌', '🤦‍♂️']
+var emojis = ref([])
+
+var emojisDict = {
+	spooky: ['🎃', '🪦', '⚰️', '🕯️', '🦇', '🕸️', '🧟', '👻'],
+	faces: ['🤠', '🧐', '🥸', '🥳', '😠', '😵', '😬', '🤯'],
+	weird: ['👁️', '📎', '🎰', '🧪', '🔮', '🐉', '🗿', '⏳'],
+	animals: ['🐺', '🐸', '🫎', '🐔', '🦞', '🐣', '🦔', '🐳']
+}
+
+const getRandomList = () => {
+	var keys = Object.keys(emojisDict)
+
+	var randomIndex = Math.floor(Math.random() * keys.length)
+
+	var randomKey = keys[randomIndex]
+
+	var randomList = emojisDict[randomKey]
+
+	return randomList
+}
+
 var items = ref([])
 var matchedIndexes = ref([])
 var badSelections = ref([])
@@ -22,6 +52,7 @@ const resetGame = () => {
 	matchedIndexes.value = []
 	gameOver.value = false
 	moves.value = 0
+	emojis.value = getRandomList()
 
 	initList()
 }
@@ -30,7 +61,7 @@ const resetGame = () => {
 const generateList = () => {
 	var arr = []
 	for (let i = 0; i < 8; i++) {
-		let item = { val: i, icon: emojis[i] }
+		let item = { val: i, icon: emojis.value[i] }
 
 		//Add matching pair for each item
 		arr.push(item, item)
@@ -166,6 +197,8 @@ const displayCardValue = (i) => {
 }
 
 onMounted(() => {
+	emojis.value = getRandomList()
+
 	initList()
 	loadHighScore()
 })
@@ -179,6 +212,7 @@ watch(matchedIndexes, (newVal) => {
 
 watch(gameOver, (newVal) => {
 	if (newVal) {
+		confettiHandler()
 		toast.add({
 			severity: 'success',
 			summary: 'Success!',
@@ -225,6 +259,8 @@ watch(gameOver, (newVal) => {
 					>{{ gameOver ? 'Play Again' : 'Reset' }}</Button
 				>
 			</div>
+
+			<Button @click="confettiHandler">TEST</Button>
 		</div>
 	</div>
 </template>
