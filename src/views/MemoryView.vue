@@ -144,6 +144,10 @@ const handleMisMatch = (index1, index2) => {
 	}, 1500)
 }
 
+const newHighScoreModal = ref(false)
+const allHighScoreModal = ref(false)
+const userName = ref('')
+const existingHighScores = ref([])
 const updateBestScore = () => {
 	if (!bestScore.value) {
 		bestScore.value = moves.value
@@ -152,20 +156,42 @@ const updateBestScore = () => {
 			bestScore.value = moves.value
 		}
 	}
-	updateHighScore(moves.value)
+
+	newHighScoreModal.value = true
+	// updateHighScore(moves.value)
 }
 
-const loadHighScore = () => {
+const loadHighScores = () => {
 	const result = getFromLocalStorage('high-scores')
 
 	if (result?.memory_card) {
-		bestScore.value = result.memory_card
+		bestScore.value = result.memory_card[0]
+
+		existingHighScores.value = result.memory_card
+
+		existingHighScores.value.sort((a, b) => a.score - b.score)
+
+		console.log(existingHighScores.value, 'existing on  load')
 	}
 }
 
-const updateHighScore = (score) => {
+const updateHighScore = (userName, score) => {
+	const newHighScore = { user: userName, score: score }
+
+	const updatedScores = [newHighScore, ...existingHighScores.value]
+	updatedScores.sort((a, b) => a.score - b.score)
+
 	let highScores = {
-		memory_card: score
+		memory_card: updatedScores
+	}
+	saveToLocalStorage('high-scores', highScores)
+
+	newHighScoreModal.value = false
+}
+
+const clearHighScores = () => {
+	let highScores = {
+		memory_card: []
 	}
 	saveToLocalStorage('high-scores', highScores)
 }
@@ -200,7 +226,7 @@ onMounted(() => {
 	emojis.value = getRandomList()
 
 	initList()
-	loadHighScore()
+	loadHighScores()
 })
 
 var gameOver = ref(false)
@@ -235,7 +261,7 @@ watch(gameOver, (newVal) => {
 				</Button>
 				<div class="flex justify-content-between">
 					<p>Moves: {{ moves }}</p>
-					<p v-if="bestScore">Best: {{ bestScore }}</p>
+					<p v-if="existingHighScores.length > 0">Best: {{ existingHighScores[0].score }}</p>
 				</div>
 				<div class="grid">
 					<div v-for="(item, i) in items" class="col-3" :key="i">
@@ -259,6 +285,28 @@ watch(gameOver, (newVal) => {
 					>{{ gameOver ? 'Play Again' : 'Reset' }}</Button
 				>
 			</div>
+			<Button @click="clearHighScores">Clear High Scores</Button>
+			<Dialog :closable="false" v-model:visible="newHighScoreModal">
+				<template #header>
+					<h2>High Score: {{ moves }}</h2>
+				</template>
+				<InputText
+					@keydown.enter="updateHighScore(userName, moves)"
+					type="text"
+					v-model="userName"
+				/>
+				<template #footer>
+					<div class="flex justify-content-center">
+						<Button @click="updateHighScore(userName, moves)">Save</Button>
+					</div>
+				</template>
+			</Dialog>
+
+			<Dialog>
+				<template #header>
+					<h2>High Scores</h2>
+				</template>
+			</Dialog>
 		</div>
 	</div>
 </template>

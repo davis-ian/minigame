@@ -18,6 +18,7 @@ import Toast from 'primevue/toast'
 import Dialog from 'primevue/dialog'
 import Menubar from 'primevue/menubar'
 import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
 
 app.use(PrimeVue)
 app.use(ToastService)
@@ -26,6 +27,7 @@ app.component('Toast', Toast)
 app.component('Dialog', Dialog)
 app.component('Menubar', Menubar)
 app.component('Card', Card)
+app.component('InputText', InputText)
 
 //Font Awesome Config
 import { library } from '@fortawesome/fontawesome-svg-core'

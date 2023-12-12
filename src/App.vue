@@ -5,7 +5,7 @@ import NavBar from '@/components/layout/NavBar.vue'
 
 <template>
 	<!-- <NavBar /> -->
-	<main id="main">
+	<main id="main" class="p-3">
 		<RouterView id="routerView" />
 	</main>
 
