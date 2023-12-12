@@ -259,8 +259,6 @@ watch(gameOver, (newVal) => {
 					>{{ gameOver ? 'Play Again' : 'Reset' }}</Button
 				>
 			</div>
-
-			<Button @click="confettiHandler">TEST</Button>
 		</div>
 	</div>
 </template>
