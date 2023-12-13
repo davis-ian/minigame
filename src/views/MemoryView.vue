@@ -83,6 +83,13 @@ const initList = () => {
 
 // Grid Item Select
 const handleGridItemClick = (i) => {
+	if (allHighScoreModal.value) {
+		allHighScoreModal.value = false
+	}
+	if (newHighScoreModal.value) {
+		newHighScoreModal.value = false
+	}
+
 	if (badSelections.value.length > 0) {
 		badSelections.value = []
 	}
@@ -325,7 +332,11 @@ watch(gameOver, (newVal) => {
 				</template>
 			</Dialog>
 
-			<Dialog v-model:visible="allHighScoreModal" :closable="false">
+			<Dialog
+				@click:outside="allHighScoreModal = false"
+				v-model:visible="allHighScoreModal"
+				:closable="false"
+			>
 				<template #header>
 					<h2>High Scores</h2>
 				</template>
