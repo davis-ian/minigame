@@ -330,7 +330,7 @@ watch(gameOver, (newVal) => {
 					<h2>High Scores</h2>
 				</template>
 
-				<ListBox :style="{ maxHeight: '300px' }" :options="existingHighScores">
+				<!-- <ListBox :style="{ maxHeight: '300px' }" :options="existingHighScores">
 					<template #option="slotProps">
 						<div class="flex justify-content-between gap-8">
 							<span>
@@ -341,7 +341,20 @@ watch(gameOver, (newVal) => {
 							</span>
 						</div>
 					</template>
-				</ListBox>
+				</ListBox> -->
+
+				<DataTable
+					tableStyle="min-width: 300px"
+					:style="{ maxHeight: '500px' }"
+					:value="existingHighScores"
+				>
+					<Column field="user" header="User"></Column>
+					<Column class="text-right" field="score">
+						<template #header>
+							<span class="flex-1 text-right">Score</span>
+						</template>
+					</Column>
+				</DataTable>
 
 				<template #footer>
 					<div class="flex justify-content-center">
