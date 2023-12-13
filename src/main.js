@@ -19,6 +19,10 @@ import Dialog from 'primevue/dialog'
 import Menubar from 'primevue/menubar'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
+import OrderList from 'primevue/orderlist'
+import Listbox from 'primevue/listbox'
+import Divider from 'primevue/divider'
+import Tooltip from 'primevue/tooltip'
 
 app.use(PrimeVue)
 app.use(ToastService)
@@ -28,15 +32,20 @@ app.component('Dialog', Dialog)
 app.component('Menubar', Menubar)
 app.component('Card', Card)
 app.component('InputText', InputText)
+app.component('OrderList', OrderList)
+app.component('ListBox', Listbox)
+app.component('Divider', Divider)
+
+app.directive('tooltip', Tooltip)
 
 //Font Awesome Config
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import { faHome, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faArrowLeft, faGamepad } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faHome, faArrowLeft)
+library.add(faHome, faArrowLeft, faGamepad)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 

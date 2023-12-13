@@ -3,6 +3,7 @@ import { ref, onMounted, watch, nextTick } from 'vue'
 import { saveToLocalStorage, getFromLocalStorage } from '@/utilities/general.js'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
+import { v4 as uuidv4 } from 'uuid'
 
 import JSConfetti from 'js-confetti'
 const jsConfetti = new JSConfetti()
@@ -144,39 +145,51 @@ const handleMisMatch = (index1, index2) => {
 	}, 1500)
 }
 
+// High Score
 const newHighScoreModal = ref(false)
 const allHighScoreModal = ref(false)
 const userName = ref('')
 const existingHighScores = ref([])
-const updateBestScore = () => {
-	if (!bestScore.value) {
-		bestScore.value = moves.value
-	} else {
-		if (moves.value < bestScore.value) {
-			bestScore.value = moves.value
-		}
-	}
 
+const testSetScore = () => {
 	newHighScoreModal.value = true
-	// updateHighScore(moves.value)
+	moves.value = 125
 }
 
 const loadHighScores = () => {
 	const result = getFromLocalStorage('high-scores')
 
 	if (result?.memory_card) {
-		bestScore.value = result.memory_card[0]
-
 		existingHighScores.value = result.memory_card
-
 		existingHighScores.value.sort((a, b) => a.score - b.score)
+
+		bestScore.value = existingHighScores.value[0]
 
 		console.log(existingHighScores.value, 'existing on  load')
 	}
 }
 
-const updateHighScore = (userName, score) => {
-	const newHighScore = { user: userName, score: score }
+const addHighScore = (userName, score) => {
+	if (!userName) {
+		toast.add({
+			severity: 'error',
+			summary: '',
+			detail: 'Username is required',
+			life: 3000
+		})
+		return
+	}
+	if (!score) {
+		toast.add({
+			severity: 'error',
+			summary: '',
+			detail: 'Score is required',
+			life: 3000
+		})
+		return
+	}
+
+	const newHighScore = { id: uuidv4(), user: userName, score: score }
 
 	const updatedScores = [newHighScore, ...existingHighScores.value]
 	updatedScores.sort((a, b) => a.score - b.score)
@@ -185,8 +198,10 @@ const updateHighScore = (userName, score) => {
 		memory_card: updatedScores
 	}
 	saveToLocalStorage('high-scores', highScores)
+	existingHighScores.value = updatedScores
 
 	newHighScoreModal.value = false
+	allHighScoreModal.value = true
 }
 
 const clearHighScores = () => {
@@ -246,7 +261,7 @@ watch(gameOver, (newVal) => {
 			life: 3000
 		})
 
-		updateBestScore()
+		newHighScoreModal.value = true
 	}
 })
 </script>
@@ -256,11 +271,19 @@ watch(gameOver, (newVal) => {
 		<div class="flex justify-content-center">
 			<div style="max-width: 1000px">
 				<h1 class="text-center">Memory Game</h1>
-				<Button @click="$router.push('/')">
-					<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
-				</Button>
+				<div class="flex justify-content-between">
+					<Button @click="$router.push('/')">
+						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
+					</Button>
+					<Button @click="allHighScoreModal = true">
+						<font-awesome-icon class="mr-2" icon="fa-solid fa-gamepad"></font-awesome-icon>High
+						Scores</Button
+					>
+				</div>
 				<div class="flex justify-content-between">
 					<p>Moves: {{ moves }}</p>
+
+					<!-- v-tooltip.top="'High Scores'" -->
 					<p v-if="existingHighScores.length > 0">Best: {{ existingHighScores[0].score }}</p>
 				</div>
 				<div class="grid">
@@ -285,7 +308,7 @@ watch(gameOver, (newVal) => {
 					>{{ gameOver ? 'Play Again' : 'Reset' }}</Button
 				>
 			</div>
-			<Button @click="clearHighScores">Clear High Scores</Button>
+
 			<Dialog :closable="false" v-model:visible="newHighScoreModal">
 				<template #header>
 					<h2>High Score: {{ moves }}</h2>
@@ -297,14 +320,33 @@ watch(gameOver, (newVal) => {
 				/>
 				<template #footer>
 					<div class="flex justify-content-center">
-						<Button @click="updateHighScore(userName, moves)">Save</Button>
+						<Button @click="addHighScore(userName, moves)">Save</Button>
 					</div>
 				</template>
 			</Dialog>
 
-			<Dialog>
+			<Dialog v-model:visible="allHighScoreModal" :closable="false">
 				<template #header>
 					<h2>High Scores</h2>
+				</template>
+
+				<ListBox :style="{ maxHeight: '300px' }" :options="existingHighScores">
+					<template #option="slotProps">
+						<div class="flex justify-content-between gap-8">
+							<span>
+								{{ slotProps.option.score }}
+							</span>
+							<span>
+								{{ slotProps.option.user }}
+							</span>
+						</div>
+					</template>
+				</ListBox>
+
+				<template #footer>
+					<div class="flex justify-content-center">
+						<Button @click="allHighScoreModal = false">Close</Button>
+					</div>
 				</template>
 			</Dialog>
 		</div>
