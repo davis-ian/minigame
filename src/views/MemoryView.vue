@@ -5,6 +5,7 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 import { v4 as uuidv4 } from 'uuid'
 
+// Confetti
 import JSConfetti from 'js-confetti'
 const jsConfetti = new JSConfetti()
 
@@ -17,6 +18,7 @@ const confettiHandler = () => {
 
 import FlipCard from '@/components/MemoryGame/FlipCard.vue'
 
+// Emojis
 var emojis = ref([])
 
 var emojisDict = {
@@ -158,11 +160,6 @@ const allHighScoreModal = ref(false)
 const userName = ref('')
 const existingHighScores = ref([])
 
-const testSetScore = () => {
-	newHighScoreModal.value = true
-	moves.value = 125
-}
-
 const loadHighScores = () => {
 	const result = getFromLocalStorage('high-scores')
 
@@ -171,8 +168,6 @@ const loadHighScores = () => {
 		existingHighScores.value.sort((a, b) => a.score - b.score)
 
 		bestScore.value = existingHighScores.value[0]
-
-		console.log(existingHighScores.value, 'existing on  load')
 	}
 }
 
@@ -211,14 +206,7 @@ const addHighScore = (userName, score) => {
 	allHighScoreModal.value = true
 }
 
-const clearHighScores = () => {
-	let highScores = {
-		memory_card: []
-	}
-	saveToLocalStorage('high-scores', highScores)
-}
-
-// Selected / Matched Class Handler
+// Selected / Matched Card Class Handlers
 const handleOptionalClasses = (i) => {
 	if (matchedIndexes.value.includes(i)) {
 		return 'bg-primary'
@@ -244,6 +232,7 @@ const displayCardValue = (i) => {
 	return false
 }
 
+// Life Cycle Hooks
 onMounted(() => {
 	emojis.value = getRandomList()
 
@@ -251,6 +240,7 @@ onMounted(() => {
 	loadHighScores()
 })
 
+// Game Over Watchers
 var gameOver = ref(false)
 watch(matchedIndexes, (newVal) => {
 	if (newVal.length == items.value.length) {
@@ -271,6 +261,13 @@ watch(gameOver, (newVal) => {
 		newHighScoreModal.value = true
 	}
 })
+
+const clearHighScores = () => {
+	let highScores = {
+		memory_card: []
+	}
+	saveToLocalStorage('high-scores', highScores)
+}
 </script>
 
 <template>
@@ -282,16 +279,13 @@ watch(gameOver, (newVal) => {
 					<Button @click="$router.push('/')">
 						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
 					</Button>
-					<Button @click="allHighScoreModal = true">
-						<font-awesome-icon class="mr-2" icon="fa-solid fa-gamepad"></font-awesome-icon>High
-						Scores</Button
-					>
 				</div>
-				<div class="flex justify-content-between">
+				<div class="flex justify-content-between py-3">
 					<p>Moves: {{ moves }}</p>
 
-					<!-- v-tooltip.top="'High Scores'" -->
-					<p v-if="existingHighScores.length > 0">Best: {{ existingHighScores[0].score }}</p>
+					<Button @click="allHighScoreModal = true" text v-if="existingHighScores.length > 0"
+						>High Score: {{ existingHighScores[0].score }}</Button
+					>
 				</div>
 				<div class="grid">
 					<div v-for="(item, i) in items" class="col-3" :key="i">
@@ -316,7 +310,17 @@ watch(gameOver, (newVal) => {
 				>
 			</div>
 
-			<Dialog :closable="false" v-model:visible="newHighScoreModal">
+			<Dialog
+				:closable="false"
+				v-model:visible="newHighScoreModal"
+				:dismissable-mask="true"
+				modal
+				:pt="{
+					mask: {
+						style: 'backdrop-filter: blur(2px)'
+					}
+				}"
+			>
 				<template #header>
 					<h2>High Score: {{ moves }}</h2>
 				</template>
@@ -333,26 +337,19 @@ watch(gameOver, (newVal) => {
 			</Dialog>
 
 			<Dialog
-				@click:outside="allHighScoreModal = false"
 				v-model:visible="allHighScoreModal"
+				:dismissable-mask="true"
 				:closable="false"
+				modal
+				:pt="{
+					mask: {
+						style: 'backdrop-filter: blur(2px)'
+					}
+				}"
 			>
 				<template #header>
 					<h2>High Scores</h2>
 				</template>
-
-				<!-- <ListBox :style="{ maxHeight: '300px' }" :options="existingHighScores">
-					<template #option="slotProps">
-						<div class="flex justify-content-between gap-8">
-							<span>
-								{{ slotProps.option.score }}
-							</span>
-							<span>
-								{{ slotProps.option.user }}
-							</span>
-						</div>
-					</template>
-				</ListBox> -->
 
 				<DataTable
 					tableStyle="min-width: 300px"

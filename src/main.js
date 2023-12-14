@@ -6,6 +6,10 @@ import router from './router'
 
 const app = createApp(App)
 
+// ClickOutsideDirective
+import ClickOutside from '@/utilities/clickOutsideDirective.js'
+app.directive('click-outside', ClickOutside)
+
 // PrimeVue Config
 import 'primevue/resources/themes/lara-dark-green/theme.css'
 // import 'primevue/resources/themes/bootstrap4-dark-purple/theme.css'
