@@ -4,6 +4,7 @@ import { saveToLocalStorage, getFromLocalStorage } from '@/utilities/general.js'
 import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 import { v4 as uuidv4 } from 'uuid'
+import FlipCard from '@/components/MemoryGame/FlipCard.vue'
 
 // Confetti
 import JSConfetti from 'js-confetti'
@@ -15,8 +16,6 @@ const confettiHandler = () => {
 		emojis: emojis.value
 	})
 }
-
-import FlipCard from '@/components/MemoryGame/FlipCard.vue'
 
 // Emojis
 var emojis = ref([])
