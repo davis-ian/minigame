@@ -7,7 +7,13 @@ import Button from 'primevue/button'
 		<div style="text-align: center">
 			<h1>Games</h1>
 
-			<Button @click="$router.push('/memory')">Memory</Button>
+			<Button
+				v-tooltip.bottom="{ value: 'Memory Flash Cards', showDelay: 100, hideDelay: 100 }"
+				size="large"
+				@click="$router.push('/memory')"
+			>
+				<font-awesome-icon style="font-size: 3rem" icon="fa-solid fa-brain"></font-awesome-icon>
+			</Button>
 		</div>
 	</div>
 </template>
