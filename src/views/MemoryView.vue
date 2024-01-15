@@ -273,7 +273,7 @@ const clearHighScores = () => {
 	<div>
 		<div class="flex justify-content-center">
 			<div style="max-width: 1000px">
-				<h1 class="text-center">Memory Game</h1>
+				<h1 class="text-center">Memory Game Test</h1>
 				<div class="flex justify-content-between">
 					<Button @click="$router.push('/')">
 						<font-awesome-icon icon="fa-solid fa-arrow-left"></font-awesome-icon>
